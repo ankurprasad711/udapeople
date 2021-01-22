@@ -192,7 +192,7 @@ jobs:
           name: Add back-end ip to ansible inventory
           working_directory: ./.circleci/ansible
           command: |
-            aws ec2 describe-instances \
+            aws ec2 --region "us-west-2" describe-instances \
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
               --filters "Name=tag:project,Values=udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
               --output text >> inventory.txt
@@ -234,6 +234,8 @@ jobs:
       - checkout
       - attach_workspace:
           at: .
+      - restore_cache:
+          keys: [backend-build]
       - run:
           name: install AWS CLI
           working_directory: /tmp
@@ -271,6 +273,8 @@ jobs:
       - checkout
       - attach_workspace:
           at: .
+      - restore_cache:
+          keys: [frontend-build]
       - run:
           name: install AWS
           working_directory: /tmp
