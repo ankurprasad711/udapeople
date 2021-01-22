@@ -43,8 +43,8 @@ jobs:
       - run:
           name: Build front-end
           working_directory: ./frontend
-          command: ls -la && npm install \
-            npm build
+          command: ls -la && npm install
+                   npm build
       - save_cache:
           paths: [frontend/node_modules]
           key: frontend-build
@@ -59,8 +59,8 @@ jobs:
       - run:
           name: Back-end build
           working_directory: ./backend
-          command: ls -la && npm install \
-            npm build
+          command: ls -la && npm install
+                   npm build
       - save_cache:
           paths: [backend/node_modules]
           key: backend-build
