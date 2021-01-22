@@ -223,7 +223,7 @@ jobs:
           name: server configuration
           working_directory: ./.circleci/ansible
           command: |
-            ansible-playbook -i inventory.txt configure-server.yaml
+            ansible-playbook -i inventory.txt configure-server.yml
       - destroy-environment:
           id: ${CIRCLE_WORKFLOW_ID:0:7}
   
@@ -324,7 +324,7 @@ jobs:
           working_directory: ./.circleci/ansible
           command: |
             cat inventory
-            ansible-playbook -i inventory.txt deploy-server.yaml -vv
+            ansible-playbook -i inventory.txt deploy-backend.yml -vv
       - destroy-environment:
           id: ${CIRCLE_WORKFLOW_ID:0:7}
       - revert-migrations:
