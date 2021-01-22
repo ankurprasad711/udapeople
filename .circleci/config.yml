@@ -103,11 +103,11 @@ jobs:
       # Your job code here
       - run:
           name: Junit Dependency installation 
-          working_directory: ./frontend
+          working_directory: ./backend
           command: npm install --save-dev jest-junit
       - run:
           name: Frontend test cases run
-          working_directory: ./frontend
+          working_directory: ./backend
           command: npm test -- --ci --runInBand --reporters=default --reporters=jest-junit && pwd
             
 
