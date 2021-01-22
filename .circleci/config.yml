@@ -172,11 +172,11 @@ jobs:
       - run:
           name: put backend Url in memstash
           command: |
-            BACKEND-IP=$(aws ec2 describe-instances \
+            BACKEND_IP=$(aws ec2 describe-instances \
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
               --filters "Name=tag:project,Values=udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
               --output text)
-            curl -H "Content-Type: text/plain" -H "token: e38d9ab9-4bc5-4bd6-9618-a7d15fb54506" --request PUT --data "http://$BACKEND-IP:3030" https://api.memstash.io/values/BACKEND_URL
+            curl -H "Content-Type: text/plain" -H "token: e38d9ab9-4bc5-4bd6-9618-a7d15fb54506" --request PUT --data "http://$BACKEND_IP:3030" https://api.memstash.io/values/BACKEND_URL
       
       - run:
           name: Ensure front-end infrastructure exist
