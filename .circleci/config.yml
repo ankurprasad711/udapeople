@@ -106,9 +106,40 @@ jobs:
           working_directory: ./backend
           command: npm install --save-dev jest-junit
       - run:
-          name: Frontend test cases run
+          name: Backend test cases run
           working_directory: ./backend
           command: npm test -- --ci --runInBand --reporters=default --reporters=jest-junit && pwd
+
+  scan-frontend:
+    docker:
+      - image: circleci/node:13.8.0
+    steps:
+      # Checkout code from git
+      - checkout
+      # Restore from cache
+      - restore_cache:
+          keys: [frontend-build]
+
+      # Your job code here
+      - run:
+          name: Frontend check against security vulnerabilities
+          working_directory: ./frontend
+          command: npm audit --audit-level=critical
+
+  scan-backend:
+    docker:
+      - image: circleci/node:13.8.0
+    steps:
+      # Checkout code from git
+      - checkout
+      # Restore from cache
+      - restore_cache:
+          keys: [backend-build]
+      # Your job code here
+      - run:
+          name: Backend check against security vulnerabilities
+          working_directory: ./backend
+          command: npm audit --audit-level=critical
             
 
 
@@ -122,3 +153,8 @@ workflows:
           requires: [build-frontend]
       - test-backend:
           requires: [build-backend]
+      - scan-frontend:
+          requires: [build-frontend]
+      - scan-backend:
+          requires: [build-backend]
+      
