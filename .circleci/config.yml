@@ -124,7 +124,7 @@ jobs:
       - run:
           name: Frontend check against security vulnerabilities
           working_directory: ./frontend
-          command: npm audit --audit-level=critical
+          command: npm audit --audit-level=critical --force
 
   scan-backend:
     docker:
@@ -139,7 +139,7 @@ jobs:
       - run:
           name: Backend check against security vulnerabilities
           working_directory: ./backend
-          command: npm audit --audit-level=critical
+          command: npm audit --audit-level=critical --force
             
 
 
