@@ -2,7 +2,7 @@
   - name: Copy backend files
     become: true
     copy:
-    src: ../../backend/dist
+      src: ../../backend/dist
       dest: /home/ubuntu/
   - name: Start PM2
     shell: |
