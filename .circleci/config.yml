@@ -43,6 +43,20 @@ commands:
             fi
             
 jobs:
+  install-backend-dependencies:
+    docker:
+      - image: circleci/node:13.8.0
+    steps:
+      - checkout
+      - run:
+          name: npm install
+          working_directory: ./backend
+          command: ls -la && npm install
+      - persist_to_workspace:
+          root: .
+          paths:
+            - backend/node_modules
+  
   build-frontend:
     docker:
       - image: circleci/node:13.8.0
@@ -67,17 +81,9 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Back-end install dependencies
-          working_directory: ./backend
-          command: ls -la && npm install
-      - run:
           name: Backend build
           working_directory: ./backend
           command: npm run build
-      - persist_to_workspace:
-          root: .
-          paths:
-            - backend/node_modules
       - persist_to_workspace:
           root: .
           paths: backend/dist
@@ -252,7 +258,6 @@ jobs:
           name: Run migrations
           working_directory: ./backend
           command: |
-            npm install
             npm run migrations > migration_status
       - run:
           name: Send migration results to memstash
