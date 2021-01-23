@@ -253,7 +253,7 @@ jobs:
           name: install dependencies
           working_directory: ./backend
           command: |
-            ls-la && npm install
+            ls -la && npm install
       - run:
           name: Run migrations
           working_directory: ./backend
