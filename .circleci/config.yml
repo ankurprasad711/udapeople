@@ -78,7 +78,9 @@ jobs:
           root: .
           paths:
             - backend/node_modules
-            - backend/dist
+      - persist_to_workspace:
+          root: .
+          paths: backend/dist
 
   test-frontend:
     docker:
