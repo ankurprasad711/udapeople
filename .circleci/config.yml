@@ -51,7 +51,7 @@ jobs:
       - run:
           name: front-end install dependencies
           working_directory: ./frontend
-          command: npm install
+          command: ls -la && npm install
       - run:
           name: Frontend Build
           working_directory: ./frontend
@@ -66,12 +66,10 @@ jobs:
       - image: circleci/node:13.8.0
     steps:
       - checkout
-      - restore_cache:
-          keys: [backend-build]
       - run:
           name: Back-end install dependencies
           working_directory: ./backend
-          command: npm install
+          command: ls -la && npm install
       - run:
           name: Backend build
           working_directory: ./backend
