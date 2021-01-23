@@ -30,12 +30,15 @@ commands:
       - run:
           name: Revert migrations
           # Add when this will run
+          when: on_fail
           working_directory: ./backend
           command: |
             # Curl command here to see if there was a successful migration associated with the workflow id, store result in SUCCESS variable
             SUCCESS = $(curl -H "token: e38d9ab9-4bc5-4bd6-9618-a7d15fb54506" --request GET https://api.memstash.io/values/DB_MIGRATION_<< parameters.id >>)
-            if[[ "$SUCCESS"== "true" ]]
+            echo $SUCCESS
+            if [[ "$SUCCESS"== "success" ]]
             then
+             pwd
              npm run migrations:revert
             fi
             
@@ -45,19 +48,18 @@ jobs:
       - image: circleci/node:13.8.0
     steps:
       - checkout
-      - restore_cache:
-          keys: [frontend-build]
       - run:
           name: front-end install dependencies
           working_directory: ./frontend
-          command: ls -la && npm install
+          command: npm install
       - run:
           name: Frontend Build
           working_directory: ./frontend
           command: npm run build
-      - save_cache:
-          paths: [frontend/node_modules]
-          key: frontend-build
+      - persist_to_workspace:
+          root: .
+          paths:
+            - frontend/node_modules
 
   build-backend:
     docker:
@@ -69,14 +71,16 @@ jobs:
       - run:
           name: Back-end install dependencies
           working_directory: ./backend
-          command: ls -la && npm install
+          command: npm install
       - run:
           name: Backend build
           working_directory: ./backend
           command: npm run build
-      - save_cache:
-          paths: [backend/node_modules]
-          key: backend-build
+      - persist_to_workspace:
+          root: .
+          paths:
+            - backend/node_modules
+            - backend/dist
 
   test-frontend:
     docker:
@@ -85,8 +89,9 @@ jobs:
       # Checkout code from git
       - checkout
       # Restore from cache
-      - restore_cache:
-          keys: [frontend-build]
+      - attach_workspace:
+          at: .
+
       # Your job code here
       - run:
           name: Junit Dependency installation 
@@ -105,8 +110,8 @@ jobs:
       # Checkout code from git
       - checkout
       # Restore from cache
-      - restore_cache:
-          keys: [backend-build]
+      - attach_workspace:
+          at: .
       # Your job code here
       - run:
           name: Junit Dependency installation 
@@ -124,8 +129,8 @@ jobs:
       # Checkout code from git
       - checkout
       # Restore from cache
-      - restore_cache:
-          keys: [frontend-build]
+      - attach_workspace:
+          at: .
 
       # Your job code here
       - run:
@@ -140,8 +145,8 @@ jobs:
       # Checkout code from git
       - checkout
       # Restore from cache
-      - restore_cache:
-          keys: [backend-build]
+      - attach_workspace:
+          at: .
       # Your job code here
       - run:
           name: Backend check against security vulnerabilities
@@ -166,7 +171,7 @@ jobs:
             aws cloudformation deploy \
               --template-file backend.yml \
               --stack-name "udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
-              --parameter-overrides ID="udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
+              --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}" \
               --tags project=udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}
 
       - run:
@@ -200,7 +205,7 @@ jobs:
       - persist_to_workspace:
           root: .
           paths:
-            - project/.circleci/ansible/inventory.txt
+            - .circleci/ansible	
       # Here's where you will add some code to rollback on failure
       - destroy-environment:
           id: ${CIRCLE_WORKFLOW_ID:0:7}
@@ -221,8 +226,9 @@ jobs:
             apk add --update ansible
       - run:
           name: server configuration
-          working_directory: ./.circleci/ansible
+          working_directory: ./.circleci/ansible/
           command: |
+            cat inventory.txt
             ansible-playbook -i inventory.txt configure-server.yml
       - destroy-environment:
           id: ${CIRCLE_WORKFLOW_ID:0:7}
@@ -234,8 +240,6 @@ jobs:
       - checkout
       - attach_workspace:
           at: .
-      - restore_cache:
-          keys: [backend-build]
       - run:
           name: install AWS CLI
           working_directory: /tmp
@@ -273,8 +277,6 @@ jobs:
       - checkout
       - attach_workspace:
           at: .
-      - restore_cache:
-          keys: [frontend-build]
       - run:
           name: install AWS
           working_directory: /tmp
@@ -327,6 +329,7 @@ jobs:
           name: Deploy backend
           working_directory: ./.circleci/ansible
           command: |
+            cat inventory.txt
             ansible-playbook -i inventory.txt deploy-backend.yml -vv
       - destroy-environment:
           id: ${CIRCLE_WORKFLOW_ID:0:7}
