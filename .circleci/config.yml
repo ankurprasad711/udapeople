@@ -198,7 +198,7 @@ jobs:
               --output text >> inventory.txt
             cat inventory.txt
       - persist_to_workspace:
-          root: ~/
+          root: .
           paths:
             - project/.circleci/ansible/inventory.txt
       # Here's where you will add some code to rollback on failure
@@ -256,10 +256,10 @@ jobs:
             if grep -q "has been executed successfully" migration_status
             then
               echo "Db migration successful, will update memstash"
-              curl -H "Content-Type: text/plain" -H "token: e38d9ab9-4bc5-4bd6-9618-a7d15fb54506" --request PUT --data "true" https://api.memstash.io/values/DB_MIGRATION_${CIRCLE_WORKFLOW_ID:0:7}
+              curl -H "Content-Type: text/plain" -H "token: e38d9ab9-4bc5-4bd6-9618-a7d15fb54506" --request PUT --data "success" https://api.memstash.io/values/DB_MIGRATION_${CIRCLE_WORKFLOW_ID:0:7}
             else
               echo "DB migration failed,verify setup"
-              curl -H "Content-Type: text/plain" -H "token: e38d9ab9-4bc5-4bd6-9618-a7d15fb54506" --request PUT --data "false" https://api.memstash.io/values/DB_MIGRATION_${CIRCLE_WORKFLOW_ID:0:7}
+              curl -H "Content-Type: text/plain" -H "token: e38d9ab9-4bc5-4bd6-9618-a7d15fb54506" --request PUT --data "failure" https://api.memstash.io/values/DB_MIGRATION_${CIRCLE_WORKFLOW_ID:0:7}
             fi
             echo "WorkflowID=${CIRCLE_WORKFLOW_ID:0:7}"
       - destroy-environment:
