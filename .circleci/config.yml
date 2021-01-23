@@ -253,6 +253,7 @@ jobs:
           name: Run migrations
           working_directory: ./backend
           command: |
+            npm install
             npm run migrations > migration_status
       - run:
           name: Send migration results to memstash
@@ -292,6 +293,7 @@ jobs:
           command: |
             export API_URL=$(curl -H "token: e38d9ab9-4bc5-4bd6-9618-a7d15fb54506" --request GET https://api.memstash.io/values/BACKEND_URL)
             echo "${API_URL}"
+            npm install
             npm run build
       - run:
           name: Deploy frontend objects to S3
