@@ -36,7 +36,7 @@ commands:
             # Curl command here to see if there was a successful migration associated with the workflow id, store result in SUCCESS variable
             export SUCCESS=$(curl -H "token: e38d9ab9-4bc5-4bd6-9618-a7d15fb54506" --request GET https://api.memstash.io/values/DB_MIGRATION_<< parameters.id >>)
             echo $SUCCESS
-            if(("$SUCCESS"=="success" ));
+            if(("$SUCCESS"=="success" ))
             then
              pwd
              npm install
