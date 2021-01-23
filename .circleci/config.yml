@@ -253,8 +253,8 @@ jobs:
 
       - run:
           name: Run migrations
-          working_directory: ./backend
           command: |
+            pwd
             echo ENVIRONMENT=production > "backend/.env"
             echo TYPEORM_CONNECTION=postgres >> "backend/.env"
             echo TYPEORM_ENTITIES=./src/modules/domain/**/*.entity.ts >> "backend/.env"
