@@ -43,7 +43,26 @@ commands:
             fi
             
 jobs:
-  install-backend-dependencies:
+  
+  build-frontend:
+    docker:
+      - image: circleci/node:13.8.0
+    steps:
+      - checkout
+      - run:
+          name: front-end install dependencies
+          working_directory: ./frontend
+          command: ls -la && npm install
+      - persist_to_workspace:
+          root: .
+          paths:
+            - frontend/node_modules
+      - run:
+          name: Frontend Build
+          working_directory: ./frontend
+          command: npm run build
+
+  build-backend:
     docker:
       - image: circleci/node:13.8.0
     steps:
@@ -56,30 +75,6 @@ jobs:
           root: .
           paths:
             - backend/node_modules
-  
-  build-frontend:
-    docker:
-      - image: circleci/node:13.8.0
-    steps:
-      - checkout
-      - run:
-          name: front-end install dependencies
-          working_directory: ./frontend
-          command: ls -la && npm install
-      - run:
-          name: Frontend Build
-          working_directory: ./frontend
-          command: npm run build
-      - persist_to_workspace:
-          root: .
-          paths:
-            - frontend/node_modules
-
-  build-backend:
-    docker:
-      - image: circleci/node:13.8.0
-    steps:
-      - checkout
       - run:
           name: Backend build
           working_directory: ./backend
