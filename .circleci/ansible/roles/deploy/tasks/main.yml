@@ -1,10 +1,9 @@
 ---
   - name: Copy backend files
     become: true
-    synchronize:
-      src: ../../backend/dist
+    copy:
+      src: ~/backend
       dest: /home/ubuntu/
-      recursive: true
 
   - name: Start PM2
     shell: |
