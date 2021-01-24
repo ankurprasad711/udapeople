@@ -344,7 +344,7 @@ jobs:
             ls -la
             cd /home
             ls -la
-            tar czf backend.tar.gz -P backend/dist
+            tar czf backend.tar.gz -P backend
       - run:
           name: Deploy backend 2
           command: |
