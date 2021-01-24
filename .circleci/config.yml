@@ -333,7 +333,7 @@ jobs:
     steps:
       - checkout
       - add_ssh_keys:
-          fingerprints: ["9a:02:61:b5:1b:ea:b5:aa:02:78:9e:e5:80:f3:7c:1a"]
+          fingerprints: [b1:e0:6c:cf:d7:1f:c4:ab:cb:fb:fc:7d:40:6a:1b:3d]
       - attach_workspace:
           at: .
       - run:
@@ -347,9 +347,7 @@ jobs:
           command: |
             pwd
             ls -la
-            cd /home
-            ls -la
-            tar czf backend.tar.gz -P home/circleci/project/backend/dist
+            tar -C backend -czvf backend.tar.gz .
       - run:
           name: Deploy backend 2
           command: |
