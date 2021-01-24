@@ -1,8 +1,13 @@
 ---
+  - name: current directory
+    become: true
+    shell: |
+      pwd
+      ls -la
   - name: Copy backend files
     become: true
     copy:
-      src: ./backend.tar.gz
+      src: backend.tar.gz
       dest: /home/ubuntu/backend.tar.gz
 
   - name: Start PM2
