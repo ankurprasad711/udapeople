@@ -80,6 +80,9 @@ jobs:
           name: Backend build
           working_directory: ./backend
           command: npm run build
+      - save_cache:
+          paths: [backend/dist]
+          key: backend-dist
       - persist_to_workspace:
           root: .
           paths: backend/dist
@@ -337,6 +340,8 @@ jobs:
           name: Install dependencies
           command: |
             apk add --update ansible openssh-client tar gzip
+      - restore_cache:
+          keys: ["backend-dist"]
       - run:
           name: Deploy backend
           command: |
@@ -344,7 +349,7 @@ jobs:
             ls -la
             cd /home
             ls -la
-            tar czf backend.tar.gz -P backend
+            tar czf backend.tar.gz -P home/circleci/project/backend/dist
       - run:
           name: Deploy backend 2
           command: |
