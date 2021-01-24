@@ -326,28 +326,37 @@ jobs:
 
   deploy-backend:
     docker:
-      - image: python:3.9.0-alpine
-    
+      - image: python:3.7-alpine3.11
     steps:
       - checkout
       - add_ssh_keys:
-          fingerprints: [b1:e0:6c:cf:d7:1f:c4:ab:cb:fb:fc:7d:40:6a:1b:3d]
+          fingerprints: ["9a:02:61:b5:1b:ea:b5:aa:02:78:9e:e5:80:f3:7c:1a"]
       - attach_workspace:
           at: .
       - run:
           name: Install dependencies
-          working_directory: /tmp
           command: |
-            apk add --update ansible curl rsync openssh nodejs npm
-            ansible --version
-            pip install awscli
-            aws --version
+            apk add --update ansible openssh-client tar gzip
       - run:
           name: Deploy backend
-          working_directory: ./.circleci/ansible
           command: |
-            cat inventory.txt
-            ansible-playbook -i inventory.txt deploy-backend.yml -vv
+            pwd
+            ls -la
+            cd /home
+            ls -la
+            tar czf backend.tar.gz -P backend/dist
+      - run:
+          name: Deploy backend 2
+          command: |
+            export ANSIBLE_HOST_KEY_CHECKING=False
+            ansible-playbook \
+              -i .circleci/ansible/inventory.txt \
+              .circleci/ansible/deploy-backend.yml
+      - run:
+          name: Install AWS CLI for rollback
+          when: on_fail
+          command: |
+            apk add --update py3-pip && pip3 install --upgrade pip && pip3 install awscli
       - destroy-environment:
           id: ${CIRCLE_WORKFLOW_ID:0:7}
       - revert-migrations:
