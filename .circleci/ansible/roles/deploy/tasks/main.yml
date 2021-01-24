@@ -7,7 +7,7 @@
   - name: Copy backend files
     become: true
     copy:
-      src: backend.tar.gz
+      src: /root/project/backend.tar.gz
       dest: /home/ubuntu/backend.tar.gz
 
   - name: Start PM2
