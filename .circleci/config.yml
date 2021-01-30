@@ -117,30 +117,6 @@ jobs:
             npm i
             npm run test
  
-            
-  scan-frontend:
-    executor:
-      name: node/default
-    steps:
-        - checkout
-        - run:
-            name: Audit Frontend
-            command: |
-              cd frontend
-              npm i
-              npm audit --audit-level=critical
-
-  scan-backend:
-    executor:
-      name: node/default
-    steps:
-        - checkout
-        - run:
-            name: Audit Backend
-            command: |
-              cd backend
-              npm i
-              npm audit fix --audit-level=critical --force
 
   deploy-infrastructure:
     docker:
@@ -375,12 +351,8 @@ workflows:
           requires: [build-frontend]
       - test-backend:
            requires: [build-backend]
-      - scan-backend:
-          requires: [build-backend]
-      - scan-frontend:
-          requires: [build-frontend]
       - deploy-infrastructure:
-          requires: [test-frontend, test-backend, scan-frontend, scan-backend]
+          requires: [test-frontend, test-backend]
           filters:
             branches:
               only: [master]
