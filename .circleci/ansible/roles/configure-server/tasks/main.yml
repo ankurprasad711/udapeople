@@ -42,4 +42,4 @@
       state: present
   
   - name: "wait 300 seconds for target connection to become reachable/usable."
-      command: sleep 300s
+    command: sleep 300s
