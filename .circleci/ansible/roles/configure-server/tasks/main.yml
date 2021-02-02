@@ -1,5 +1,4 @@
 ---
-
   - name: "update apt packages."
     become: yes
     apt:
@@ -18,7 +17,7 @@
   - name: "install nodejs and npm"
     become: yes
     apt:
-      name: npm
+      name: ["nodejs", "npm"]
       state: latest
       update_cache: yes
 
@@ -29,17 +28,14 @@
       global: yes
       production: yes
 
-  - name: "Install node version 12.x"
-    shell: |
-      curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -
-      sudo apt install -y nodejs
-  - name: "Install pm2"
-    become: true
+  - name: "install nodejs 13.8.0"
+    become: yes
+    shell: n 13.8.0
+
+  - name: "install pm2"
+    become: yes
     npm:
       name: pm2
       global: yes
       production: yes
       state: present
-  
-  - name: "wait 300 seconds for target connection to become reachable/usable."
-    command: sleep 300s
