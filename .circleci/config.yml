@@ -225,18 +225,11 @@ jobs:
       - attach_workspace:
           at: .
       - run:
-          name: install AWS CLI
-          working_directory: /tmp
-          command: |
-            sudo apt-get update && sudo apt-get install -yy less
-            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-            unzip awscliv2.zip
-            sudo ./aws/install
-      - run:
           name: install dependencies
           working_directory: ./.circleci/ansible
           command: |
             apk add --update ansible
+            pip install awscli
       - run:
           name: server configuration
           working_directory: ./.circleci/ansible/
