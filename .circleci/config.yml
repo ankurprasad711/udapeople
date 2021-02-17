@@ -277,7 +277,7 @@ jobs:
             # sudo npm run build
             sudo npm run migrations > migration.log
             cat migration.log
-            migration_status=$(cat migration.log | grep -c "has been executed successfully")
+            migration_status=$(cat migration.log | grep -c "No migrations are pending")
             if [ $migration_status > 0 ]; then exit 0; else exit 1; fi;
       - run:
           name: Send migration results to memstash
@@ -386,7 +386,7 @@ jobs:
           command: |
             export BACKEND_URL=$(curl -H "token: e38d9ab9-4bc5-4bd6-9618-a7d15fb54506" --request GET https://api.memstash.io/values/BACKEND_URL)
             echo "${BACKEND_URL}"
-            #curl ${BACKEND_URL}/api/status
+            curl ${BACKEND_URL}/api/status
       - run:
           name: Frontend smoke test.
           working_directory: ./backend
