@@ -431,6 +431,41 @@ jobs:
       - revert-migrations:
           id: ${CIRCLE_WORKFLOW_ID:0:7}
 
+  cleanup:
+    docker:
+      - image: amazon/aws-cli
+    steps:
+      - checkout
+      - run:
+          name: Dependencies
+          command: |
+            yum -y install tar gzip
+      - run:
+          name: Get & Delete Old Stacks
+          command: |
+            WorkflowID=$(curl -H "token: e38d9ab9-4bc5-4bd6-9618-a7d15fb54506" --request GET https://api.memstash.io/values/WorkflowID)
+            export STACKS=$(aws cloudformation list-stacks \
+            --query "StackSummaries[*].StackName" \
+            --stack-status-filter CREATE_COMPLETE \
+            --no-paginate --output text)
+            echo WorkflowID: "$WorkflowID"
+            echo STACKS: "$STACKS" 
+            
+            if [ ! -z $WorkflowID ]
+            then
+              aws s3 rm s3://udapeople-${WorkflowID} --recursive
+              aws s3 rb s3://udapeople-${WorkflowID} --force
+              aws cloudformation delete-stack --stack-name udapeople-backend-${OldWorkflowID}
+              aws cloudformation delete-stack --stack-name udapeople-frontend-${OldWorkflowID}
+              echo "Stacks deleted succesfully"
+            else
+              echo "Fresh New Stacks"
+            fi
+      - destroy-environment:
+          id: ${CIRCLE_WORKFLOW_ID:0:7}
+      - revert-migrations:
+          id: ${CIRCLE_WORKFLOW_ID:0:7}
+
 
 workflows:
   default:
@@ -459,4 +494,6 @@ workflows:
           requires: [deploy-backend, deploy-frontend]
       - cloudfront-update:
           requires: [smoke-test]
+      - cleanup:
+          requires: [cloudfront-update]
       
