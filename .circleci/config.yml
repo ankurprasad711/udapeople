@@ -441,7 +441,7 @@ jobs:
           command: |
             yum -y install tar gzip
       - run:
-          name: Get & Delete Old Stacks
+          name: Delete old stack
           command: |
             WorkflowID=$(curl -H "token: e38d9ab9-4bc5-4bd6-9618-a7d15fb54506" --request GET https://api.memstash.io/values/WorkflowID)
             export STACKS=$(aws cloudformation list-stacks \
@@ -475,6 +475,10 @@ workflows:
       - test-frontend:
           requires: [build-frontend]
       - test-backend:
+          requires: [build-backend]
+      - scan-frontend:
+          requires: [build-frontend]
+      - scan-backend:
           requires: [build-backend]
 
       - deploy-infrastructure:
